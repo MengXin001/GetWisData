@@ -25,26 +25,32 @@ class Down(object):
         VHHH  = ['45004']
         codelist = [BABJ1,BABJ2,BABJ3,BABJ4,BABJ5,BABJ6,BABJ7,BABJ8,BABJ9,VHHH]
         cnlist = ['BABJ1','BABJ2','BABJ3','BABJ4','BABJ5','BABJ6','BABJ7','BABJ8','BABJ9','VHHH']
-        list = 0
+        lst = 0
         for code in codelist:
             if self.stationid in code:
-                list = list
+                lst = lst
+                codename = cnlist[lst]
+                break
             else:
-                list = list + 1
-                codename = cnlist[list]
+                lst = lst + 1
+                if lst == 9 and self.stationid != '45004':
+                    codename = "Error StationId"
+                    break
+                else: 
+                    codename = cnlist[lst]
         return codename
-  
-    def download(self):#dtime=114514191981 1145 14 19 1981
+
+    def download(self):#dtime=197901010000 19790101 0000
         codename = self.initid(self.stationid)
         if codename == "VHHH":#Seturl
             url = "https://wis/d/o/VHHH/BUFR/Upper_air/TEMP/"+ self.dtime[0:8] + "/" + self.dtime[8:] +"00/"
+            text = get_html(url)
+            fn = re.search('A_IUSC02VHHH.{36}', text).group()
         else:
-            url = "https://wis/d/o/BABJ/BUFR/Upper_air/TEMP/"#Todo
+            url = "https://wis/d/o/BABJ/BUFR/Upper_air/TEMP/"+ self.dtime[0:8] + "/" + self.dtime[8:] +"00/"
+            text = get_html(url)
+            fn = re.search('A_IUSN0'+codename[4]+'BABJ'+self.dtime[6:12]+'_C_RJTD.{22}', text).group()
         #return url
-        text = get_html(url)
-        fn = re.search('A_IUSC02VHHH.{36}', text).group()
-        urllib.request.urlretrieve(url + fn, fn)
-        return url + fn
-
-Durl = Down("45004","202206060000")
-print(Durl.download())
+        print(url + fn)
+        urllib.request.urlretrieve(url + fn, "../SatData/Upper_air/" + fn)
+        return fn
