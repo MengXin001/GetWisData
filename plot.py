@@ -23,7 +23,7 @@ df.info()
 fm = "WyomingArchive"
 pres, temp, dwpt, wdir, wspd, alt = df['pressure'].values, df['temperature'].values, df['dewpoint'].values, df['direction'].values, df['speed'].values, df['height'].values
 # Import WIS Data
-st="45004
+st="45004"
 def get_pressure_level_index(p, plevel, reverse=False):
     if reverse:
         idx = 0
